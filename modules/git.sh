@@ -137,7 +137,7 @@ _fzf_git_delete_branch() {
 
   local branches
   branches=$(echo "$candidates" \
-    | _fzf_palette_fzf --multi \
+    | FZF_PALETTE_STATIC_HEADER=1 _fzf_palette_fzf --multi \
     | paste -s -d' ')
 
   [[ -n "$branches" ]] && {
