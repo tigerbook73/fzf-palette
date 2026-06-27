@@ -3,7 +3,7 @@
 ## Project Structure & Module Organization
 
 This repository contains a small Bash extension for contextual `fzf` pickers.
-The main entrypoint is `core/dispatcher.sh`, which defines the `Ctrl-G`
+The main entrypoint is `core/dispatcher.sh`, which defines the `Alt-G`
 readline binding, dispatch logic, and action picker. Shared helpers live in
 `modules/common.sh`; command handlers live in `modules/`, such as
 `modules/cd.sh` and `modules/git.sh`. `installer.sh` installs the tool by
@@ -51,8 +51,8 @@ bash -n installer.sh
 ```
 
 For behavior changes, manually verify the relevant picker from an interactive
-shell. Examples: type `cd` then press `Ctrl-G`, type `git switch` then press
-`Ctrl-G`, and confirm the selected value updates the readline buffer.
+shell. Examples: type `cd` then press `Alt-G`, type `git switch` then press
+`Alt-G`, and confirm the selected value updates the readline buffer.
 
 ## Commit & Pull Request Guidelines
 

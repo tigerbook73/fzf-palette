@@ -21,7 +21,7 @@ To uninstall:
 
 ## Usage
 
-Press `Ctrl-G` in an interactive Bash shell.
+Press `Alt-G` in an interactive Bash shell.
 
 - Empty or unknown commands open an action picker first.
 - `cd` opens a directory picker when there is no existing argument, then runs
@@ -58,9 +58,9 @@ switch
 
 Only selected commands have deeper picker support:
 
-- `git switch <Ctrl-G>` selects from local branches first, then remote branches.
-- `git branch -d <Ctrl-G>` selects one or more local branches to delete.
-- `git branch -D <Ctrl-G>` selects one or more local branches to force-delete.
+- `git switch <Alt-G>` selects from local branches first, then remote branches.
+- `git branch -d <Alt-G>` selects one or more local branches to delete.
+- `git branch -D <Alt-G>` selects one or more local branches to force-delete.
 
 Generated git commands are inserted into the command line; they are not executed
 automatically.

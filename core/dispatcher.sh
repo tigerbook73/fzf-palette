@@ -8,7 +8,7 @@ source "$FZF_PALETTE_HOME/modules/git.sh"
 
 # The bind guard keeps syntax checks and non-interactive shells quiet.
 if [[ $- == *i* ]]; then
-  bind -x '"\C-g": fzf_palette'
+  bind -x '"\eg": fzf_palette'
 fi
 
 fzf_palette() {
