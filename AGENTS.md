@@ -3,25 +3,26 @@
 ## Project Structure & Module Organization
 
 This repository contains a small Bash extension for contextual `fzf` pickers.
-The main source file is `src/fzf-palette.bash`, which defines the `Ctrl-G`
-readline binding, dispatch logic, shared helpers, and common pickers. Git
-command handling lives in `src/git.bash`. `install.sh` installs the tool by
-symlinking `src/` to `~/.fzf-palette` and adding a source line to `~/.fzf.bash`.
+The main entrypoint is `core/dispatcher.sh`, which defines the `Ctrl-G`
+readline binding, dispatch logic, and action picker. Shared helpers live in
+`modules/common.sh`; command handlers live in `modules/`, such as
+`modules/cd.sh` and `modules/git.sh`. `installer.sh` installs the tool by
+symlinking the repository directory to `~/.fzf-palette` and adding a source line
+to `~/.fzf.bash`.
 
-Documentation lives in `README.md` and `docs/`. Use `docs/bindings.md` for
-details about key bindings and interaction design. Put future maintenance
-helpers in `scripts/` and tests or fixtures in `test/`.
+`README.md` is the user guide. Keep internal structure and maintenance guidance
+in this file.
 
 ## Build, Test, and Development Commands
 
 There is no build step; this is sourced Bash code.
 
-- `bash -n src/fzf-palette.bash`: check the main script for syntax errors.
-- `bash -n src/git.bash`: check git command helpers for syntax errors.
-- `bash -n install.sh`: check the installer for syntax errors.
-- `source ./install.sh`: install and load the binding into the current shell.
-- `./install.sh`: install persistently, then restart the shell or run
-  `source ~/.fzf.bash`.
+- `./test.sh`: run syntax checks for all Bash files in the runtime path.
+- `bash -n core/dispatcher.sh`: check the main dispatcher for syntax errors.
+- `bash -n modules/git.sh`: check git command helpers for syntax errors.
+- `bash -n installer.sh`: check the installer for syntax errors.
+- `./installer.sh install`: install persistently, then restart the shell or run
+  `source ~/.bashrc`.
 
 Manual testing should happen in an interactive Bash terminal with `fzf`,
 `fdfind`, `git`, and `batcat` available.
@@ -42,13 +43,15 @@ key bindings stay consistent. Preserve shell quoting through
 At minimum, run both syntax checks before committing:
 
 ```bash
-bash -n src/fzf-palette.bash
-bash -n src/git.bash
-bash -n install.sh
+bash -n core/dispatcher.sh
+bash -n modules/common.sh
+bash -n modules/cd.sh
+bash -n modules/git.sh
+bash -n installer.sh
 ```
 
 For behavior changes, manually verify the relevant picker from an interactive
-shell. Examples: type `cd` then press `Ctrl-G`, type `git checkout` then press
+shell. Examples: type `cd` then press `Ctrl-G`, type `git switch` then press
 `Ctrl-G`, and confirm the selected value updates the readline buffer.
 
 ## Commit & Pull Request Guidelines

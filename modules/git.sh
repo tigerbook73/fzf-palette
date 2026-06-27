@@ -17,16 +17,13 @@ _fzf_git_command_candidates() {
     'switch'
 }
 
-_fzf_git_branch_command_candidates() {
-  printf '%s\n' '-d'
-}
-
 _fzf_git_complete_command() {
   local prefix="$1"
   local matches
   local count
   local selected
 
+  # Complete immediately only when the typed prefix maps to one curated command.
   matches=$(_fzf_git_command_candidates | while IFS= read -r command; do
     [[ "$command" == "$prefix"* ]] && printf '%s\n' "$command"
   done)
@@ -67,32 +64,6 @@ _fzf_git_has_exact_command() {
   return 1
 }
 
-_fzf_git_complete_branch_command() {
-  local prefix="$1"
-  local matches
-  local count
-  local selected
-
-  matches=$(_fzf_git_branch_command_candidates | while IFS= read -r command; do
-    [[ "$command" == "$prefix"* ]] && printf '%s\n' "$command"
-  done)
-  count=$(printf '%s\n' "$matches" | sed '/^$/d' | wc -l | tr -d ' ')
-
-  if [[ "$count" -eq 1 ]]; then
-    selected="$matches"
-  else
-    if [[ "$count" -eq 0 ]]; then
-      matches=$(_fzf_git_branch_command_candidates)
-    fi
-    selected=$(printf '%s\n' "$matches" | _fzf_palette_fzf --prompt='git branch> ' --query "$prefix")
-  fi
-
-  [[ -n "$selected" ]] && {
-    READLINE_LINE="git branch $selected "
-    READLINE_POINT=${#READLINE_LINE}
-  }
-}
-
 _fzf_git() {
   local subcmd="$1"
 
@@ -101,31 +72,22 @@ _fzf_git() {
       _fzf_git_complete_command ""
       ;;
 
-    checkout | checkout\ *)
-      local branch
-      # Include local and remote branch names, then normalize origin/foo to foo.
-      branch=$(git branch --all --format='%(refname:short)' 2>/dev/null \
-        | sed 's#^origin/##' \
-        | sort -u \
-        | _fzf_palette_fzf)
-
-      [[ -n "$branch" ]] && {
-        READLINE_LINE="git checkout $branch"
-        READLINE_POINT=${#READLINE_LINE}
-      }
+    switch | switch\ *)
+      _fzf_git_switch_branch
       ;;
 
     branch | branch\ )
-      _fzf_git_complete_branch_command ""
+      # "git branch" has no picker by itself; the user must type -d or -D.
+      return
       ;;
 
     branch\ -*)
       local branch_subcmd="${subcmd#branch }"
 
-      if [[ "$branch_subcmd" == "-d" || "$branch_subcmd" == "-d "* ]]; then
-        _fzf_git_delete_branch
+      if [[ "$branch_subcmd" == "-d" || "$branch_subcmd" == "-d "* || "$branch_subcmd" == "-D" || "$branch_subcmd" == "-D "* ]]; then
+        _fzf_git_delete_branch "$branch_subcmd"
       else
-        _fzf_git_complete_branch_command "$branch_subcmd"
+        return
       fi
       ;;
 
@@ -137,22 +99,49 @@ _fzf_git() {
   esac
 }
 
+_fzf_git_local_branch_candidates() {
+  git branch --format='%(refname:short)' 2>/dev/null
+}
+
+_fzf_git_switch_branch_candidates() {
+  # Switch can target local branches and remote-tracking branches.
+  # Local branches are emitted first, then remotes, with duplicates removed.
+  {
+    _fzf_git_local_branch_candidates
+    git branch --remotes --format='%(refname:short)' 2>/dev/null \
+      | grep -vE '(^|/)HEAD$'
+  } | awk '!seen[$0]++'
+}
+
+_fzf_git_switch_branch() {
+  local branch
+  branch=$(_fzf_git_switch_branch_candidates | _fzf_palette_fzf)
+
+  [[ -n "$branch" ]] && {
+    READLINE_LINE="git switch $branch"
+    READLINE_POINT=${#READLINE_LINE}
+  }
+}
+
 _fzf_git_delete_branch() {
+  local branch_subcmd="$1"
+  # Preserve whether the user typed -d or -D in the generated command.
+  local flag="${branch_subcmd%% *}"
   local current
   current=$(git branch --show-current 2>/dev/null)
 
-  local candidate
-  candidate=$(git branch --format='%(refname:short)' 2>/dev/null)
+  local candidates
+  candidates=$(_fzf_git_local_branch_candidates)
   # Do not offer the checked-out branch for deletion.
-  [[ -n "$current" ]] && candidate=$(echo "$candidate" | grep -vxF "$current")
+  [[ -n "$current" ]] && candidates=$(echo "$candidates" | grep -vxF "$current")
 
   local branches
-  branches=$(echo "$candidate" \
+  branches=$(echo "$candidates" \
     | _fzf_palette_fzf --multi \
     | paste -s -d' ')
 
   [[ -n "$branches" ]] && {
-    READLINE_LINE="git branch -d $branches"
+    READLINE_LINE="git branch $flag $branches"
     READLINE_POINT=${#READLINE_LINE}
   }
 }
