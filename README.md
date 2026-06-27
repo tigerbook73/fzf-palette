@@ -23,7 +23,7 @@ source ./install.sh
 
 Press `Ctrl-G` in an interactive Bash shell.
 
-- Empty or unknown commands open a file picker and append the selected path.
+- Empty or unknown commands open an action picker first.
 - `cd` opens a directory picker and replaces the line with `cd <dir>`.
 - `git checkout` opens a branch picker.
 - `git branch -d` and `git branch -D` open a multi-select branch picker.

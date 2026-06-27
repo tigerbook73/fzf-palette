@@ -49,6 +49,39 @@ _fzf_palette_fzf() {
 }
 
 _fzf_global() {
+  local action
+  action=$(printf '%s\n' \
+    'cd' \
+    'git checkout' \
+    'git add' \
+    'git branch -d' \
+    'git branch -D' \
+    'file' \
+    | _fzf_palette_fzf --prompt='fzf-palette> ')
+
+  case "$action" in
+    cd)
+      _fzf_cd
+      ;;
+    "git checkout")
+      _fzf_git "checkout"
+      ;;
+    "git add")
+      _fzf_git ""
+      ;;
+    "git branch -d")
+      _fzf_git "branch -d"
+      ;;
+    "git branch -D")
+      _fzf_git "branch -D"
+      ;;
+    file)
+      _fzf_file
+      ;;
+  esac
+}
+
+_fzf_file() {
   local file
   file=$(_fzf_palette_fzf)
 
@@ -67,6 +100,9 @@ _fzf_cd() {
   [[ -n "$dir" ]] && {
     READLINE_LINE="cd $(_fzf_palette_shell_quote "$dir")"
     READLINE_POINT=${#READLINE_LINE}
+    # Ask the terminal for status so readline receives ESC[0n and accepts line.
+    bind '"\e[0n": accept-line'
+    printf '\e[5n'
   }
 }
 
