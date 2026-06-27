@@ -44,13 +44,13 @@ _fzf_palette_append_arg() {
 }
 
 _fzf_palette_fzf() {
-  # Keep fzf anchored below the prompt instead of taking over the whole screen.
-  fzf --height 30 --layout=reverse --preview-window=hidden --bind 'ctrl-/:toggle-preview' "$@"
+  # Match fzf's Bash integration defaults for a compact, non-fullscreen picker.
+  fzf --height 40% --min-height 20+ --layout=reverse --bind=ctrl-z:ignore "$@"
 }
 
 _fzf_global() {
   local file
-  file=$(_fzf_palette_fzf --preview 'batcat --color=always {} 2>/dev/null || cat {}')
+  file=$(_fzf_palette_fzf)
 
   [[ -n "$file" ]] && {
     # Append the selected file to whatever command the user already typed.
@@ -61,12 +61,8 @@ _fzf_global() {
 
 _fzf_cd() {
   local dir
-  # Search from the current directory and skip high-noise directories.
-  dir=$(fdfind . . --type d \
-    --exclude .git --exclude node_modules --exclude .cache \
-    --exclude __pycache__ --exclude target --exclude dist \
-    2>/dev/null \
-    | _fzf_palette_fzf --preview 'ls -1 --color=always {}')
+  # Search from the current directory and rely on fdfind's default ignore rules.
+  dir=$(fdfind . . --type d 2>/dev/null | _fzf_palette_fzf)
 
   [[ -n "$dir" ]] && {
     READLINE_LINE="cd $(_fzf_palette_shell_quote "$dir")"
@@ -84,7 +80,7 @@ _fzf_git() {
       branch=$(git branch --all --format='%(refname:short)' 2>/dev/null \
         | sed 's#^origin/##' \
         | sort -u \
-        | _fzf_palette_fzf --preview 'git log --oneline --color=always -15 {}')
+        | _fzf_palette_fzf)
 
       [[ -n "$branch" ]] && {
         READLINE_LINE="git checkout $branch"
@@ -106,7 +102,7 @@ _fzf_git() {
 
       local branches
       branches=$(echo "$candidate" \
-        | _fzf_palette_fzf --multi --preview 'git log --oneline --color=always -15 {}' \
+        | _fzf_palette_fzf --multi \
         | paste -s -d' ')
 
       [[ -n "$branches" ]] && {
@@ -119,7 +115,7 @@ _fzf_git() {
       local file
       # Default git action: select one changed path and prepare a git add.
       file=$(git -c color.status=always status --short 2>/dev/null \
-        | _fzf_palette_fzf --ansi --preview 'file=$(printf "%s" {} | sed -E "s/^.{3}//; s/^.* -> //"); git diff --color=always -- "$file"' \
+        | _fzf_palette_fzf --ansi \
         | sed -E 's/^.{3}//; s/^.* -> //')
 
       [[ -n "$file" ]] && {

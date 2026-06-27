@@ -32,9 +32,9 @@ quoted expansions, and small helpers for repeated behavior. Internal functions
 should use the `_fzf_palette_*` prefix unless they are command-specific
 pickers such as `_fzf_cd` or `_fzf_git`.
 
-Keep interactive behavior centralized in `_fzf_palette_fzf()` so layout,
-preview visibility, and key bindings stay consistent. Preserve shell quoting
-through `_fzf_palette_shell_quote()` when inserting paths into `READLINE_LINE`.
+Keep interactive behavior centralized in `_fzf_palette_fzf()` so layout and
+key bindings stay consistent. Preserve shell quoting through
+`_fzf_palette_shell_quote()` when inserting paths into `READLINE_LINE`.
 
 ## Testing Guidelines
 
@@ -47,7 +47,7 @@ bash -n install.sh
 
 For behavior changes, manually verify the relevant picker from an interactive
 shell. Examples: type `cd` then press `Ctrl-G`, type `git checkout` then press
-`Ctrl-G`, and use `Ctrl-/` inside `fzf` to toggle previews.
+`Ctrl-G`, and confirm the selected value updates the readline buffer.
 
 ## Commit & Pull Request Guidelines
 
