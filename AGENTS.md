@@ -4,9 +4,9 @@
 
 This repository contains a small Bash extension for contextual `fzf` pickers.
 The main source file is `src/fzf-palette.bash`, which defines the `Ctrl-G`
-readline binding, dispatch logic, shared helpers, and command-specific pickers.
-`install.sh` installs the tool by symlinking the source file to
-`~/.fzf-palette` and adding a source line to `~/.fzf.bash`.
+readline binding, dispatch logic, shared helpers, and common pickers. Git
+command handling lives in `src/git.bash`. `install.sh` installs the tool by
+symlinking `src/` to `~/.fzf-palette` and adding a source line to `~/.fzf.bash`.
 
 Documentation lives in `README.md` and `docs/`. Use `docs/bindings.md` for
 details about key bindings and interaction design. Put future maintenance
@@ -17,6 +17,7 @@ helpers in `scripts/` and tests or fixtures in `test/`.
 There is no build step; this is sourced Bash code.
 
 - `bash -n src/fzf-palette.bash`: check the main script for syntax errors.
+- `bash -n src/git.bash`: check git command helpers for syntax errors.
 - `bash -n install.sh`: check the installer for syntax errors.
 - `source ./install.sh`: install and load the binding into the current shell.
 - `./install.sh`: install persistently, then restart the shell or run
@@ -42,6 +43,7 @@ At minimum, run both syntax checks before committing:
 
 ```bash
 bash -n src/fzf-palette.bash
+bash -n src/git.bash
 bash -n install.sh
 ```
 

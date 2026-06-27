@@ -2,10 +2,10 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SRC="$SCRIPT_DIR/src/fzf-palette.bash"
+SRC="$SCRIPT_DIR/src"
 LINK="$HOME/.fzf-palette"
 FZF_BASH="$HOME/.fzf.bash"
-SOURCE_LINE="[ -f \"$LINK\" ] && source \"$LINK\""
+SOURCE_LINE="[ -f \"$LINK/fzf-palette.bash\" ] && source \"$LINK/fzf-palette.bash\""
 
 # 创建 symlink
 if [ -L "$LINK" ] && [ "$(readlink "$LINK")" = "$SRC" ]; then
@@ -31,7 +31,7 @@ fi
 
 if [[ "${BASH_SOURCE[0]}" != "$0" ]]; then
   # When this installer is sourced, load the binding into the current shell too.
-  source "$LINK"
+  source "$LINK/fzf-palette.bash"
   echo "loaded fzf-palette in current shell"
 else
   echo "done. restart your shell or run: source $FZF_BASH"

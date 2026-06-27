@@ -10,8 +10,8 @@ the current readline buffer into contextual pickers.
 source ~/.fzf.bash
 ```
 
-The installer symlinks `src/fzf-palette.bash` to `~/.fzf-palette` and adds a
-source line to `~/.fzf.bash`.
+The installer symlinks `src/` to `~/.fzf-palette` and adds a source line to
+`~/.fzf.bash`.
 
 To install and load the binding into the current shell immediately:
 
@@ -25,9 +25,10 @@ Press `Ctrl-G` in an interactive Bash shell.
 
 - Empty or unknown commands open an action picker first.
 - `cd` opens a directory picker and replaces the line with `cd <dir>`.
+- `git` opens a common git command picker.
+- `git <prefix>` completes directly when the prefix has one command match.
 - `git checkout` opens a branch picker.
-- `git branch -d` and `git branch -D` open a multi-select branch picker.
-- Other `git` buffers open a changed-file picker and generate `git add <file>`.
+- `git branch -d` opens a multi-select branch picker.
 
 ## Dependencies
 

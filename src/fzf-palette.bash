@@ -1,4 +1,6 @@
 # fzf-palette is meant to be sourced by an interactive Bash session.
+FZF_PALETTE_HOME="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 # The bind guard keeps syntax checks and non-interactive shells quiet.
 if [[ $- == *i* ]]; then
   bind -x '"\C-g": fzf_palette'
@@ -52,10 +54,7 @@ _fzf_global() {
   local action
   action=$(printf '%s\n' \
     'cd' \
-    'git checkout' \
-    'git add' \
-    'git branch -d' \
-    'git branch -D' \
+    'git' \
     'file' \
     | _fzf_palette_fzf --prompt='fzf-palette> ')
 
@@ -63,17 +62,8 @@ _fzf_global() {
     cd)
       _fzf_cd
       ;;
-    "git checkout")
-      _fzf_git "checkout"
-      ;;
-    "git add")
+    git)
       _fzf_git ""
-      ;;
-    "git branch -d")
-      _fzf_git "branch -d"
-      ;;
-    "git branch -D")
-      _fzf_git "branch -D"
       ;;
     file)
       _fzf_file
@@ -106,58 +96,4 @@ _fzf_cd() {
   }
 }
 
-_fzf_git() {
-  local subcmd="$1"
-
-  case "$subcmd" in
-    checkout*)
-      local branch
-      # Include local and remote branch names, then normalize origin/foo to foo.
-      branch=$(git branch --all --format='%(refname:short)' 2>/dev/null \
-        | sed 's#^origin/##' \
-        | sort -u \
-        | _fzf_palette_fzf)
-
-      [[ -n "$branch" ]] && {
-        READLINE_LINE="git checkout $branch"
-        READLINE_POINT=${#READLINE_LINE}
-      }
-      ;;
-
-    "branch -d"* | "branch -D"*)
-      local flag
-      flag=$(echo "$subcmd" | grep -oE -- '-[dD]')
-
-      local current
-      current=$(git branch --show-current 2>/dev/null)
-
-      local candidate
-      candidate=$(git branch --format='%(refname:short)' 2>/dev/null)
-      # Do not offer the checked-out branch for deletion.
-      [[ -n "$current" ]] && candidate=$(echo "$candidate" | grep -vxF "$current")
-
-      local branches
-      branches=$(echo "$candidate" \
-        | _fzf_palette_fzf --multi \
-        | paste -s -d' ')
-
-      [[ -n "$branches" ]] && {
-        READLINE_LINE="git branch $flag $branches"
-        READLINE_POINT=${#READLINE_LINE}
-      }
-      ;;
-
-    *)
-      local file
-      # Default git action: select one changed path and prepare a git add.
-      file=$(git -c color.status=always status --short 2>/dev/null \
-        | _fzf_palette_fzf --ansi \
-        | sed -E 's/^.{3}//; s/^.* -> //')
-
-      [[ -n "$file" ]] && {
-        READLINE_LINE="git add $(_fzf_palette_shell_quote "$file")"
-        READLINE_POINT=${#READLINE_LINE}
-      }
-      ;;
-  esac
-}
+source "$FZF_PALETTE_HOME/git.bash"
