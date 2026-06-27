@@ -4,8 +4,8 @@
 
 This repository contains a small Bash extension for contextual `fzf` pickers.
 The main entrypoint is `core/dispatcher.sh`, which defines the `Alt-G`
-readline binding, dispatch logic, and action picker. Shared helpers live in
-`modules/common.sh`; command handlers live in `modules/`, such as
+readline binding and dispatch logic. Shared helpers live in `modules/common.sh`;
+command handlers live in `modules/`, such as
 `modules/cd.sh` and `modules/git.sh`. `installer.sh` installs the tool by
 symlinking the repository directory to `~/.fzf-palette` and adding a source line
 to `~/.fzf.bash`.

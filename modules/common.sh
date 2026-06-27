@@ -35,14 +35,3 @@ _fzf_palette_fzf() {
     --bind="$header_bind" \
     "$@"
 }
-
-_fzf_file() {
-  local file
-  file=$(_fzf_palette_fzf)
-
-  [[ -n "$file" ]] && {
-    # Append the selected file to whatever command the user already typed.
-    _fzf_palette_append_arg "$file"
-    READLINE_POINT=${#READLINE_LINE}
-  }
-}

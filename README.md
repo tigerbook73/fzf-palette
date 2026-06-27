@@ -23,7 +23,7 @@ To uninstall:
 
 Press `Alt-G` in an interactive Bash shell.
 
-- Empty or unknown commands open an action picker first.
+- Empty or unknown commands are left unchanged.
 - `cd` opens a directory picker when there is no existing argument, then runs
   the generated `cd <dir>` command.
 - `git` opens a common git command picker.

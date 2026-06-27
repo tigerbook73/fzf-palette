@@ -32,28 +32,7 @@ fzf_palette() {
       _fzf_git "$rest"
       ;;
     *)
-      _fzf_global
-      ;;
-  esac
-}
-
-_fzf_global() {
-  local action
-  action=$(printf '%s\n' \
-    'cd' \
-    'git' \
-    'file' \
-    | _fzf_palette_fzf --prompt='fzf-palette> ')
-
-  case "$action" in
-    cd)
-      _fzf_cd
-      ;;
-    git)
-      _fzf_git ""
-      ;;
-    file)
-      _fzf_file
+      return
       ;;
   esac
 }
