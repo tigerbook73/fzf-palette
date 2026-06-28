@@ -5,6 +5,7 @@ FZF_PALETTE_HOME="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 source "$FZF_PALETTE_HOME/modules/common.sh"
 source "$FZF_PALETTE_HOME/modules/cd.sh"
 source "$FZF_PALETTE_HOME/modules/git.sh"
+source "$FZF_PALETTE_HOME/modules/r.sh"
 
 # The bind guard keeps syntax checks and non-interactive shells quiet.
 if [[ $- == *i* ]]; then
@@ -30,6 +31,9 @@ fzf_palette() {
       ;;
     git)
       _fzf_git "$rest"
+      ;;
+    r)
+      _fzf_r "$rest"
       ;;
     *)
       return
