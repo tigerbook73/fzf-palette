@@ -23,6 +23,8 @@ fzf_palette() {
     rest="${line#* }"
   fi
 
+  command -v "$cmd" &>/dev/null || return
+
   case "$cmd" in
     cd)
       if [[ -z "${rest//[[:space:]]/}" ]]; then
